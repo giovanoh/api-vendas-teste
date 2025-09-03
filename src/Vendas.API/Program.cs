@@ -1,6 +1,15 @@
 using System.Reflection;
 
+using DotNetEnv;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+
+using MySqlConnector;
+
+using Vendas.API.Infrastructure.Contexts;
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -9,7 +18,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Vendas API",
-        Version = "v1",
+        Version = "1.0.0",
         Description = "API de testes",
         Contact = new OpenApiContact
         {
@@ -29,6 +38,22 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddControllers();
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+
+var dbConfig = new MySqlConnectionStringBuilder()
+{
+    Server = Environment.GetEnvironmentVariable("MYSQL_SERVER"),
+    Database = Environment.GetEnvironmentVariable("MYSQL_DATABASE"),
+    UserID = Environment.GetEnvironmentVariable("MYSQL_USER"),
+    Password = Environment.GetEnvironmentVariable("MYSQL_PASSWORD"),
+    Port = Convert.ToUInt32(Environment.GetEnvironmentVariable("MYSQL_PORT")),
+    CharacterSet = Environment.GetEnvironmentVariable("MYSQL_CHARSET")
+};
+
+builder.Services.AddDbContext<ApiDbContext>(options =>
+    options.UseMySql(
+        dbConfig.ConnectionString,
+        new MySqlServerVersion(new Version(5, 5, 62))
+    ));
 
 WebApplication app = builder.Build();
 if (app.Environment.IsDevelopment())
