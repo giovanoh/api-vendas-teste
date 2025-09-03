@@ -1,0 +1,81 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Vendas API (HTTP)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Vendas.API/bin/Debug/net8.0/Vendas.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Vendas.API",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/swagger"
+            }
+        },
+        {
+            "name": "Launch Vendas API (HTTPS)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Vendas.API/bin/Debug/net8.0/Vendas.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Vendas.API",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/swagger"
+            }
+        },
+        {
+            "name": "Launch Vendas API (Production)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Vendas.API/bin/Debug/net8.0/Vendas.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Vendas.API",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Production"
+            }
+        },
+        {
+            "name": "Launch Vendas API (Custom Port 8080)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Vendas.API/bin/Debug/net8.0/Vendas.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Vendas.API",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/swagger"
+            }
+        },
+        {
+            "name": "Attach to .NET Process",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}
