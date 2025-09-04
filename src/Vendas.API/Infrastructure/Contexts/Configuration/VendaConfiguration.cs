@@ -9,6 +9,7 @@ public class VendaConfiguration : IEntityTypeConfiguration<Venda>
 {
     public void Configure(EntityTypeBuilder<Venda> builder)
     {
+        builder.ToTable("vendas");
         builder.HasKey(v => v.Id);
         builder.Property(v => v.Data).IsRequired();
         builder.Property(v => v.ValorTotal).IsRequired();

@@ -9,6 +9,7 @@ public class ItemConfiguration : IEntityTypeConfiguration<Item>
 {
     public void Configure(EntityTypeBuilder<Item> builder)
     {
+        builder.ToTable("itens");
         builder.HasKey(i => i.Id);
         builder.Property(i => i.Quantidade).IsRequired();
         builder.Property(i => i.Unitario).IsRequired();

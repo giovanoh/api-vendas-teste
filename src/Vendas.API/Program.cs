@@ -1,15 +1,23 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 
 using DotNetEnv;
 
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 using MySqlConnector;
 
+using Vendas.API.Domain.Repositories;
+using Vendas.API.Domain.Services;
 using Vendas.API.Infrastructure.Contexts;
+using Vendas.API.Infrastructure.Factories;
+using Vendas.API.Infrastructure.Middlewares;
+using Vendas.API.Infrastructure.Repositories;
+using Vendas.API.Infrastructure.Services;
 
-Env.Load();
+Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -36,12 +44,25 @@ builder.Services.AddSwaggerGen(c =>
     c.IncludeXmlComments(xmlPath);
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+    {
+        options.Conventions.Add(new RouteTokenTransformerConvention(
+            new LowercaseParameterTransformer()
+        ));
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    })
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = InvalidModelStateResponseFactory.Create;
+    });
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
 var dbConfig = new MySqlConnectionStringBuilder()
 {
-    Server = Environment.GetEnvironmentVariable("MYSQL_SERVER"),
+    Server = Environment.GetEnvironmentVariable("MYSQL_HOST"),
     Database = Environment.GetEnvironmentVariable("MYSQL_DATABASE"),
     UserID = Environment.GetEnvironmentVariable("MYSQL_USER"),
     Password = Environment.GetEnvironmentVariable("MYSQL_PASSWORD"),
@@ -54,6 +75,11 @@ builder.Services.AddDbContext<ApiDbContext>(options =>
         dbConfig.ConnectionString,
         new MySqlServerVersion(new Version(5, 5, 62))
     ));
+
+builder.Services.AddScoped<IClienteService, ClienteService>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 WebApplication app = builder.Build();
 if (app.Environment.IsDevelopment())

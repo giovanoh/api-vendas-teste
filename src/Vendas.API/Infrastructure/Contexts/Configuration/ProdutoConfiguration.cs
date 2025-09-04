@@ -9,6 +9,7 @@ public class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
 {
     public void Configure(EntityTypeBuilder<Produto> builder)
     {
+        builder.ToTable("produtos");
         builder.HasKey(p => p.Id);
         builder.Property(p => p.Nome).IsRequired();
         builder.Property(p => p.ImagemPath).IsRequired();

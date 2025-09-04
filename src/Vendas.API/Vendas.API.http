@@ -1,3 +1,33 @@
 @Vendas_API_HostAddress = http://localhost:5000
 
-###
+### 1 - Criar um cliente
+# @name CreateCliente
+POST {{Vendas_API_HostAddress}}/api/clientes
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Joãozinho Helicóptero",
+  "telefone": "(45) 99999-9999",
+  "empresa": "Helicópteros de Jandira"
+}
+
+### 2 - Listar clientes
+GET {{Vendas_API_HostAddress}}/api/clientes
+Accept: application/json
+
+### 3 - Atualizar cliente
+@ClienteId = {{CreateCliente.response.body.data.id}}
+PUT {{Vendas_API_HostAddress}}/api/clientes/{{ClienteId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Joãozinho Helicóptero (Atualizado)",
+  "telefone": "(45) 99999-1111",
+  "empresa": "Helicópteros de Jandira (Atualizado)"
+}
+
+### 8 - Remover o cliente
+DELETE {{Vendas_API_HostAddress}}/api/clientes/{{ClienteId}}
+Accept: application/json
