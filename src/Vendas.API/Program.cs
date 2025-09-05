@@ -76,6 +76,8 @@ builder.Services.AddDbContext<ApiDbContext>(options =>
         new MySqlServerVersion(new Version(5, 5, 62))
     ));
 
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 

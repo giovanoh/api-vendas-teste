@@ -1,3 +1,5 @@
+using AutoMapper;
+
 using Microsoft.AspNetCore.Mvc;
 
 using Vendas.API.Domain.Models;
@@ -6,7 +8,7 @@ using Vendas.API.DTOs;
 
 namespace Vendas.API.Controllers;
 
-public class ClientesController(IClienteService clienteService) : ApiController
+public class ClientesController(IClienteService clienteService, IMapper mapper) : ApiController
 {
 
     [HttpGet]
@@ -16,9 +18,7 @@ public class ClientesController(IClienteService clienteService) : ApiController
         if (!result.Success)
             return HandleErrorResponse(result);
 
-        var clientesDto = new List<ClienteDto>();
-        foreach (var cliente in result.Model!)
-            clientesDto.Add(new ClienteDto { Id = cliente.Id, Nome = cliente.Nome, Telefone = cliente.Telefone, Empresa = cliente.Empresa });
+        var clientesDto = mapper.Map<IEnumerable<ClienteDto>>(result.Model);
         return Success(clientesDto);
     }
 
@@ -29,43 +29,33 @@ public class ClientesController(IClienteService clienteService) : ApiController
         if (!result.Success)
             return HandleErrorResponse(result);
 
-        var authorDto = new ClienteDto { Id = result.Model!.Id, Nome = result.Model.Nome, Telefone = result.Model.Telefone, Empresa = result.Model.Empresa };
-        return Success(authorDto);
+        var clienteDto = mapper.Map<ClienteDto>(result.Model);
+        return Success(clienteDto);
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] SaveClienteDto saveClienteDto)
     {
-        var cliente = new Cliente
-        {
-            Nome = saveClienteDto.Name!,
-            Telefone = saveClienteDto.Telefone!,
-            Empresa = saveClienteDto.Empresa!
-        };
+        var cliente = mapper.Map<Cliente>(saveClienteDto);
         var result = await clienteService.AddAsync(cliente);
 
         if (!result.Success)
             return HandleErrorResponse(result);
 
-        var clienteDto = new ClienteDto { Id = result.Model!.Id, Nome = result.Model.Nome, Telefone = result.Model.Telefone, Empresa = result.Model.Empresa };
+        var clienteDto = mapper.Map<ClienteDto>(result.Model);
         return Created("GetClienteById", new { id = clienteDto.Id }, clienteDto);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] SaveClienteDto saveClienteDto)
     {
-        var cliente = new Cliente
-        {
-            Nome = saveClienteDto.Name!,
-            Telefone = saveClienteDto.Telefone!,
-            Empresa = saveClienteDto.Empresa!
-        };
+        var cliente = mapper.Map<Cliente>(saveClienteDto);
         var result = await clienteService.UpdateAsync(id, cliente);
 
         if (!result.Success)
             return HandleErrorResponse(result);
 
-        var clienteDto = new ClienteDto { Id = result.Model!.Id, Nome = result.Model.Nome, Telefone = result.Model.Telefone, Empresa = result.Model.Empresa };
+        var clienteDto = mapper.Map<ClienteDto>(result.Model);
         return Success(clienteDto);
     }
 
