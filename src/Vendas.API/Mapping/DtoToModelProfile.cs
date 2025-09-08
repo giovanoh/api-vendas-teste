@@ -11,5 +11,9 @@ public class DtoToModelProfile : Profile
     {
         CreateMap<SaveClienteDto, Cliente>()
             .ForMember(dest => dest.Id, opt => opt.Ignore());
+
+        CreateMap<SaveProdutoDto, Produto>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.ImagemPath, opt => opt.Ignore());
     }
 }

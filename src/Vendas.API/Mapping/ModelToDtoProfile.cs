@@ -10,5 +10,6 @@ public class ModelToDtoProfile : Profile
     public ModelToDtoProfile()
     {
         CreateMap<Cliente, ClienteDto>();
+        CreateMap<Produto, ProdutoDto>();
     }
 }

@@ -24,7 +24,7 @@ public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService s
         return Success(clientesDto);
     }
 
-    [HttpGet("{id}", Name = "GetById")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetByIdAsync(int id)
     {
         var result = await service.FindByIdAsync(id);

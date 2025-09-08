@@ -80,6 +80,8 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
