@@ -6,7 +6,7 @@ public record SaveClienteDto
 {
     [Required]
     [MaxLength(100)]
-    public string? Name { get; init; }
+    public string? Nome { get; init; }
 
     [Required]
     [MaxLength(45)]

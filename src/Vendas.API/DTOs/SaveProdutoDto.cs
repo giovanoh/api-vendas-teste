@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
+using Vendas.API.Validation;
+
 namespace Vendas.API.DTOs;
 
 public record SaveProdutoDto
@@ -12,5 +14,6 @@ public record SaveProdutoDto
     public decimal Valor { get; init; }
 
     [Required]
+    [Base64]
     public string Imagem { get; init; } = null!;
 }

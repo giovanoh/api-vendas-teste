@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 using Vendas.API.Domain.Services;
+using Vendas.API.Domain.Services.Communication;
 using Vendas.API.DTOs;
 
 namespace Vendas.API.Controllers;
@@ -39,8 +40,12 @@ public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService s
     public async Task<IActionResult> CreateAsync([FromBody] TInputDto createDto)
     {
         var model = mapper.Map<TEntity>(createDto);
-        var result = await service.AddAsync(model);
 
+        var result = BeforeCreateEntity(createDto, model);
+        if (!result.Success)
+            return HandleErrorResponse(result);
+
+        result = await service.AddAsync(model);
         if (!result.Success)
             return HandleErrorResponse(result);
 
@@ -52,8 +57,12 @@ public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService s
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] TInputDto updateDto)
     {
         var cliente = mapper.Map<TEntity>(updateDto);
-        var result = await service.UpdateAsync(id, cliente);
 
+        var result = BeforeUpdateEntity(updateDto, cliente);
+        if (!result.Success)
+            return HandleErrorResponse(result);
+
+        result = await service.UpdateAsync(id, cliente);
         if (!result.Success)
             return HandleErrorResponse(result);
 
@@ -71,4 +80,15 @@ public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService s
 
         return NoContent();
     }
+
+    protected virtual Response<TEntity> BeforeCreateEntity(TInputDto inputDto, TEntity entity)
+    {
+        return Response<TEntity>.Ok(entity);
+    }
+
+    protected virtual Response<TEntity> BeforeUpdateEntity(TInputDto inputDto, TEntity entity)
+    {
+        return Response<TEntity>.Ok(entity);
+    }
+
 }

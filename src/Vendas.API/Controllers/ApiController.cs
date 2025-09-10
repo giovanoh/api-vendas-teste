@@ -20,7 +20,7 @@ public abstract class ApiController : ControllerBase
     protected IActionResult Created<T>(string routeName, object routeValues, T data)
     {
         var response = ApiResponse<T>.Ok(data);
-        return CreatedAtRoute(routeName, routeValues, response);
+        return CreatedAtRoute(routeValues, response);
     }
 
     protected IActionResult Error(ApiProblemDetails problemDetails)

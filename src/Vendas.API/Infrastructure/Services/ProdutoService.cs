@@ -11,6 +11,6 @@ public class ProdutoService(IProdutoRepository repository, IUnitOfWork unitOfWor
     {
         produtoExistente.Nome = novoProduto.Nome;
         produtoExistente.Valor = novoProduto.Valor;
-        produtoExistente.ImagemPath = novoProduto.ImagemPath;
+        produtoExistente.Imagem = novoProduto.Imagem;
     }
 }

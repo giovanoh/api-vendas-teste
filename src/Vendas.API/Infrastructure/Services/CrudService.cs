@@ -58,7 +58,7 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
         {
             logger.LogError(ex, "Ocorreu um erro ao incluir o recurso no banco de dados.");
             return Response<TEntity>.Fail(
-                "Ocorreu um erro ao incluir o cliente",
+                "Ocorreu um erro ao incluir o recurso",
                 ErrorType.DatabaseError);
         }
         catch (Exception ex)
@@ -89,7 +89,7 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
         {
             logger.LogError(ex, "Ocorreu um erro ao atualizar o recurso com id {Id}.", id);
             return Response<TEntity>.Fail(
-                "Ocorreu um erro ao atualizar o cliente",
+                "Ocorreu um erro ao atualizar o recurso",
                 ErrorType.DatabaseError);
         }
         catch (Exception ex)
@@ -118,7 +118,7 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
         {
             logger.LogError(ex, "Ocorreu um erro ao excluir o recurso com id {Id}.", id);
             return Response<TEntity>.Fail(
-                "Ocorreu um erro ao excluir o cliente",
+                "Ocorreu um erro ao excluir o recurso",
                 ErrorType.DatabaseError);
         }
         catch (Exception ex)
