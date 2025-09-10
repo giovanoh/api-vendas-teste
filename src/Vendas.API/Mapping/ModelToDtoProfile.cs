@@ -11,5 +11,11 @@ public class ModelToDtoProfile : Profile
     {
         CreateMap<Cliente, ClienteDto>();
         CreateMap<Produto, ProdutoDto>();
+
+        CreateMap<Venda, VendaDto>()
+            .ForMember(dest => dest.NomeCliente, opt => opt.MapFrom(src => src.Cliente.Nome));
+
+        CreateMap<Item, ItemDto>()
+            .ForMember(dest => dest.NomeProduto, opt => opt.MapFrom(src => src.Produto.Nome));
     }
 }
