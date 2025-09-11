@@ -11,16 +11,26 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
     where IRepository : ICrudRepository<TEntity>
     where ITransaction : IUnitOfWork
 {
-    public async Task<Response<IEnumerable<TEntity>>> ListAsync()
+    public async Task<Response<PagedResult<TEntity>>> ListPagedAsync(PagedRequest request)
     {
         try
         {
-            return Response<IEnumerable<TEntity>>.Ok(await repository.ListAsync());
+            var (items, totalCount) = await repository.ListPagedAsync(request);
+
+            var pagedResult = new PagedResult<TEntity>
+            {
+                Data = items,
+                Page = request.Page,
+                PageSize = request.PageSize,
+                TotalCount = totalCount
+            };
+
+            return Response<PagedResult<TEntity>>.Ok(pagedResult);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Ocorreu um erro ao listar os dados.");
-            return Response<IEnumerable<TEntity>>.Fail(
+            return Response<PagedResult<TEntity>>.Fail(
                 "Ocorreu um erro ao listar os dados",
                 ErrorType.DatabaseError);
         }
@@ -52,7 +62,8 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
             await repository.AddAsync(model);
             await unitOfWork.CompleteAsync();
 
-            return Response<TEntity>.Ok(model);
+            var modelResult = await repository.FindByIdAsync((model as dynamic)!.Id);
+            return Response<TEntity>.Ok(modelResult);
         }
         catch (DbUpdateException ex)
         {

@@ -5,6 +5,6 @@ using Vendas.API.Infrastructure.Contexts;
 namespace Vendas.API.Infrastructure.Repositories;
 
 public class ProdutoRepository(ApiDbContext context)
-    : CrudRepository<Produto>(context.Produtos), IProdutoRepository
+    : CrudRepository<Produto>(context), IProdutoRepository
 {
 }

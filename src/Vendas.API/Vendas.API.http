@@ -58,7 +58,6 @@ GET {{Vendas_API_HostAddress}}/api/produtos/{{ProdutoId}}
 Accept: application/json
 
 ### 8 - Criar uma venda
-@ProdutoId = {{CreateProduto.response.body.data.id}}
 POST {{Vendas_API_HostAddress}}/api/vendas
 Content-Type: application/json
 Accept: application/json
@@ -66,11 +65,36 @@ Accept: application/json
 {
   "data": "2025-01-01",
   "valorTotal": 100.00,
-  "clienteId": {{ClienteId}}
-  "items": [
+  "clienteId": {{ClienteId}},
+  "itens": [
     {
       "produtoId": {{ProdutoId}},
-      "quantidade": 1
+      "quantidade": 1,
+      "unitario": 1
     }
   ]
 }
+
+### Teste de paginação ordenando por nome
+GET {{Vendas_API_HostAddress}}/api/produtos?page=1&pageSize=10&sortBy=nome&sortOrder=asc
+Accept: application/json
+
+### Teste de paginação ordenando por nome decrescente
+GET {{Vendas_API_HostAddress}}/api/produtos?page=1&pageSize=10&sortBy=nome&sortOrder=desc
+Accept: application/json
+
+### Teste de paginação com pageSize inválido
+GET {{Vendas_API_HostAddress}}/api/produtos?page=1&pageSize=-1&sortBy=nome&sortOrder=asc
+Accept: application/json
+
+### Teste de paginação com page inválido
+GET {{Vendas_API_HostAddress}}/api/produtos?page=-1&pageSize=10&sortBy=nome&sortOrder=asc
+Accept: application/json
+
+### Teste de paginação com sortBy inválido
+GET {{Vendas_API_HostAddress}}/api/produtos?page=1&pageSize=10&sortBy=invalid&sortOrder=asc
+Accept: application/json
+
+### Teste de paginação com sortOrder inválido
+GET {{Vendas_API_HostAddress}}/api/produtos?page=1&pageSize=10&sortBy=nome&sortOrder=invalid
+Accept: application/json

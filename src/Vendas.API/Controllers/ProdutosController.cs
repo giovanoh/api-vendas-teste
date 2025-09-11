@@ -10,6 +10,8 @@ namespace Vendas.API.Controllers;
 public class ProdutosController(IProdutoService service, IMapper mapper)
     : CrudController<IProdutoService, Produto, SaveProdutoDto, ProdutoDto>(service, mapper)
 {
+    protected override HashSet<string> SortableFields
+        => [.. base.SortableFields, "nome"];
 
     protected override Response<Produto> BeforeCreateEntity(SaveProdutoDto inputDto, Produto produto)
     {

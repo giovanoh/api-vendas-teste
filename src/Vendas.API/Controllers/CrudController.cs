@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Vendas.API.Domain.Services;
 using Vendas.API.Domain.Services.Communication;
 using Vendas.API.DTOs;
+using Vendas.API.DTOs.Response;
 
 namespace Vendas.API.Controllers;
 
@@ -13,19 +14,36 @@ public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService s
     where IService : ICrudService<TEntity>
     where TOutputDto : IdentificableDto
 {
+    protected virtual HashSet<string> SortableFields => ["id"];
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync()
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiProblemDetails), 400)]
+    [ProducesResponseType(typeof(ApiProblemDetails), 500)]
+    public async Task<IActionResult> GetPagedAsync([FromQuery] PagedRequest request)
     {
-        var result = await service.ListAsync();
+        if (!SortableFields.Contains(request.SortBy))
+            return HandleErrorResponse(
+                Response<IEnumerable<TOutputDto>>.Fail(
+                    $"Campo '{request.SortBy}' não é ordenável. Possíveis campos: {string.Join(", ", SortableFields)}",
+                    ErrorType.ValidationError));
+
+        var result = await service.ListPagedAsync(request);
         if (!result.Success)
             return HandleErrorResponse(result);
 
-        var clientesDto = mapper.Map<IEnumerable<TOutputDto>>(result.Model);
-        return Success(clientesDto);
+        var data = mapper.Map<IEnumerable<TOutputDto>>(result.Model?.Data ?? []);
+
+        var paginationInfo = PaginationInfo.Create(request, result.Model?.TotalCount ?? 0, data.Count());
+        var meta = new Dictionary<string, object> { ["pagination"] = paginationInfo.ToMetaObject() };
+
+        return Success(data, 200, meta);
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiProblemDetails), 404)]
+    [ProducesResponseType(typeof(ApiProblemDetails), 500)]
     public async Task<IActionResult> GetByIdAsync(int id)
     {
         var result = await service.FindByIdAsync(id);
@@ -37,6 +55,10 @@ public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService s
     }
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiProblemDetails), 400)]
+    [ProducesResponseType(typeof(ApiProblemDetails), 404)]
+    [ProducesResponseType(typeof(ApiProblemDetails), 500)]
     public async Task<IActionResult> CreateAsync([FromBody] TInputDto createDto)
     {
         var model = mapper.Map<TEntity>(createDto);
@@ -54,6 +76,9 @@ public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService s
     }
 
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiProblemDetails), 404)]
+    [ProducesResponseType(typeof(ApiProblemDetails), 500)]
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] TInputDto updateDto)
     {
         var cliente = mapper.Map<TEntity>(updateDto);
@@ -71,6 +96,9 @@ public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService s
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiProblemDetails), 404)]
+    [ProducesResponseType(typeof(ApiProblemDetails), 500)]
     public async Task<IActionResult> DeleteAsync(int id)
     {
         var result = await service.DeleteAsync(id);

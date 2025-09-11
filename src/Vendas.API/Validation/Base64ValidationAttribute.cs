@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 namespace Vendas.API.Validation;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-public class Base64Attribute : ValidationAttribute
+public class Base64ValidationAttribute : ValidationAttribute
 {
-    public Base64Attribute() : base("O campo {0} não é um base64 válido.")
+    public Base64ValidationAttribute() : base("O campo {0} não é um base64 válido.")
     {
     }
 

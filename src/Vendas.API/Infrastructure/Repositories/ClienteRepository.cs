@@ -5,6 +5,6 @@ using Vendas.API.Infrastructure.Contexts;
 namespace Vendas.API.Infrastructure.Repositories;
 
 public class ClienteRepository(ApiDbContext context)
-    : CrudRepository<Cliente>(context.Clientes), IClienteRepository
+    : CrudRepository<Cliente>(context), IClienteRepository
 {
 }

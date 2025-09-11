@@ -11,11 +11,14 @@ public class ItemConfiguration : IEntityTypeConfiguration<Item>
     {
         builder.ToTable("itens");
         builder.HasKey(i => i.Id);
+        builder.HasIndex(i => i.Id)
+            .IsUnique();
         builder.Property(i => i.Quantidade).IsRequired();
         builder.Property(i => i.Unitario).IsRequired();
-        builder.Property(i => i.ProdutoId).IsRequired();
-        builder.Property(i => i.VendaId).IsRequired();
+        builder.Property(i => i.ProdutoId)/*.HasColumnName("produto_id")*/.IsRequired();
+        builder.Property(i => i.VendaId)/*.HasColumnName("venda_id")*/.IsRequired();
+
         builder.HasOne(i => i.Produto).WithMany().HasForeignKey(i => i.ProdutoId);
-        builder.HasOne<Venda>().WithMany(v => v.Items).HasForeignKey(i => i.VendaId);
+        builder.HasOne<Venda>().WithMany(v => v.Itens).HasForeignKey(i => i.VendaId);
     }
 }

@@ -10,6 +10,8 @@ public class ClienteConfiguration : IEntityTypeConfiguration<Cliente>
     public void Configure(EntityTypeBuilder<Cliente> builder)
     {
         builder.ToTable("clientes");
+        builder.HasIndex(c => c.Id)
+            .IsUnique();
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Nome).IsRequired();
         builder.Property(c => c.Telefone).IsRequired();

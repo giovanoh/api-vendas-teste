@@ -14,6 +14,6 @@ public record SaveProdutoDto
     public decimal Valor { get; init; }
 
     [Required]
-    [Base64]
+    [Base64Validation]
     public string Imagem { get; init; } = null!;
 }

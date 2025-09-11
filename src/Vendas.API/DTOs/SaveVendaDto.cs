@@ -15,5 +15,5 @@ public record SaveVendaDto
     public int? ClienteId { get; init; }
 
     [Required]
-    public List<SaveItemDto> Items { get; init; } = [];
+    public List<SaveItemDto> Itens { get; init; } = [];
 }

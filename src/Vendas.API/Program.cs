@@ -74,7 +74,10 @@ builder.Services.AddDbContext<ApiDbContext>(options =>
     options.UseMySql(
         dbConfig.ConnectionString,
         new MySqlServerVersion(new Version(5, 5, 62))
-    ));
+    )
+    //.EnableSensitiveDataLogging() // Habilita logging de parâmetros sensíveis
+    //.EnableDetailedErrors() // Habilita erros detalhados
+    .LogTo(Console.WriteLine, LogLevel.Information));
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
@@ -82,6 +85,8 @@ builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IVendaService, VendaService>();
+builder.Services.AddScoped<IVendaRepository, VendaRepository>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
