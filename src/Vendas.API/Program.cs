@@ -90,6 +90,11 @@ builder.Services.AddScoped<IVendaRepository, VendaRepository>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// Cache em memória
+builder.Services.AddMemoryCache();
+builder.Services.Configure<CacheSettings>(builder.Configuration.GetSection("CacheSettings"));
+builder.Services.AddScoped<ICacheService, CacheService>();
+
 WebApplication app = builder.Build();
 if (app.Environment.IsDevelopment())
 {

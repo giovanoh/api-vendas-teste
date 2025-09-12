@@ -1,31 +1,71 @@
 using Microsoft.EntityFrameworkCore;
 
+using Vendas.API.Domain.Models;
 using Vendas.API.Domain.Repositories;
 using Vendas.API.Domain.Services;
 using Vendas.API.Domain.Services.Communication;
 
 namespace Vendas.API.Infrastructure.Services;
 
-public class CrudService<TEntity, IRepository, ITransaction>(IRepository repository, IUnitOfWork unitOfWork, ILogger<CrudService<TEntity, IRepository, IUnitOfWork>> logger)
+public class CrudService<TEntity, IRepository, ITransaction>(IRepository repository, IUnitOfWork unitOfWork, ILogger<CrudService<TEntity, IRepository, IUnitOfWork>> logger, ICacheService cacheService)
     : ICrudService<TEntity>
+    where TEntity : Entity
     where IRepository : ICrudRepository<TEntity>
     where ITransaction : IUnitOfWork
 {
+    private readonly string _entityName = typeof(TEntity).Name.ToLower();
+
+    private string GeneratePagedListKey(PagedRequest request)
+        => $"{_entityName}_paged_{request.Page}_{request.PageSize}_{request.SortBy}_{request.SortOrder}";
+
+    private string GenerateEntityKey(int id)
+        => $"{_entityName}_{id}";
+
+    private string GenerateEntityListPattern()
+        => $"{_entityName}_";
+
+    private async Task InvalidateEntityCacheAsync()
+    {
+        var pattern = GenerateEntityListPattern();
+        await cacheService.RemoveByPatternAsync(pattern);
+        logger.LogDebug("Cache invalidado para entidade: {EntityName}", _entityName);
+    }
+
+    private async Task<Response<PagedResult<TEntity>>> FetchPagedDataAsync(PagedRequest request)
+    {
+        var (items, totalCount) = await repository.ListPagedAsync(request);
+
+        var pagedResult = new PagedResult<TEntity>
+        {
+            Data = items,
+            Page = request.Page,
+            PageSize = request.PageSize,
+            TotalCount = totalCount
+        };
+
+        return Response<PagedResult<TEntity>>.Ok(pagedResult);
+    }
+
+    private async Task<Response<TEntity>> FetchEntityByIdAsync(int id)
+    {
+        var model = await repository.FindByIdAsync(id);
+        if (model == null)
+            return Response<TEntity>.NotFound($"Recurso com id {id} não encontrado");
+
+        return Response<TEntity>.Ok(model);
+    }
+
     public async Task<Response<PagedResult<TEntity>>> ListPagedAsync(PagedRequest request)
     {
         try
         {
-            var (items, totalCount) = await repository.ListPagedAsync(request);
-
-            var pagedResult = new PagedResult<TEntity>
+            if (cacheService.IsEnabled)
             {
-                Data = items,
-                Page = request.Page,
-                PageSize = request.PageSize,
-                TotalCount = totalCount
-            };
+                var cacheKey = GeneratePagedListKey(request);
+                return await cacheService.GetOrSetAsync(cacheKey, () => FetchPagedDataAsync(request));
+            }
 
-            return Response<PagedResult<TEntity>>.Ok(pagedResult);
+            return await FetchPagedDataAsync(request);
         }
         catch (Exception ex)
         {
@@ -40,11 +80,13 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
     {
         try
         {
-            var model = await repository.FindByIdAsync(id);
-            if (model == null)
-                return Response<TEntity>.NotFound($"Recurso com id {id} não encontrado");
+            if (cacheService.IsEnabled)
+            {
+                var cacheKey = GenerateEntityKey(id);
+                return await cacheService.GetOrSetAsync(cacheKey, () => FetchEntityByIdAsync(id));
+            }
 
-            return Response<TEntity>.Ok(model);
+            return await FetchEntityByIdAsync(id);
         }
         catch (Exception ex)
         {
@@ -62,8 +104,11 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
             await repository.AddAsync(model);
             await unitOfWork.CompleteAsync();
 
-            var modelResult = await repository.FindByIdAsync((model as dynamic)!.Id);
-            return Response<TEntity>.Ok(modelResult);
+            var modelResult = await repository.FindByIdAsync(model.Id);
+
+            await InvalidateEntityCacheAsync();
+
+            return Response<TEntity>.Ok(modelResult!);
         }
         catch (DbUpdateException ex)
         {
@@ -94,6 +139,8 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
             repository.Update(modelExistente);
             await unitOfWork.CompleteAsync();
 
+            await InvalidateEntityCacheAsync();
+
             return Response<TEntity>.Ok(modelExistente);
         }
         catch (DbUpdateException ex)
@@ -122,6 +169,8 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
 
             repository.Delete(modelExistente);
             await unitOfWork.CompleteAsync();
+
+            await InvalidateEntityCacheAsync();
 
             return Response<TEntity>.Ok(modelExistente);
         }

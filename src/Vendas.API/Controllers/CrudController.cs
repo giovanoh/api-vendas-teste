@@ -2,6 +2,7 @@ using AutoMapper;
 
 using Microsoft.AspNetCore.Mvc;
 
+using Vendas.API.Domain.Models;
 using Vendas.API.Domain.Services;
 using Vendas.API.Domain.Services.Communication;
 using Vendas.API.DTOs;
@@ -12,6 +13,7 @@ namespace Vendas.API.Controllers;
 public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService service, IMapper mapper)
     : ApiController
     where IService : ICrudService<TEntity>
+    where TEntity : Entity
     where TOutputDto : IdentificableDto
 {
     protected virtual HashSet<string> SortableFields => ["id"];

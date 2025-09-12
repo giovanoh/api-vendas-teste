@@ -1,8 +1,7 @@
 namespace Vendas.API.Domain.Models;
 
-public class Venda
+public class Venda : Entity
 {
-    public int Id { get; set; }
     public DateTime Data { get; set; }
     public decimal ValorTotal { get; set; }
 

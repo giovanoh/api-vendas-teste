@@ -1,8 +1,7 @@
 namespace Vendas.API.Domain.Models;
 
-public class Produto
+public class Produto : Entity
 {
-    public int Id { get; set; }
     public string Nome { get; set; } = null!;
     public string Imagem { get; set; } = null!;
     public decimal Valor { get; set; }

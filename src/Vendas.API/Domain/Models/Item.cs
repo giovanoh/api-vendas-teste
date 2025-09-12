@@ -1,8 +1,7 @@
 namespace Vendas.API.Domain.Models;
 
-public class Item
+public class Item : Entity
 {
-    public int Id { get; set; }
     public int Quantidade { get; set; }
     public decimal Unitario { get; set; }
 
