@@ -52,8 +52,8 @@ public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService s
         if (!result.Success)
             return HandleErrorResponse(result);
 
-        var clienteDto = mapper.Map<TOutputDto>(result.Model);
-        return Success(clienteDto);
+        var modelDto = mapper.Map<TOutputDto>(result.Model);
+        return Success(modelDto);
     }
 
     [HttpPost]
@@ -83,18 +83,18 @@ public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService s
     [ProducesResponseType(typeof(ApiProblemDetails), 500)]
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] TInputDto updateDto)
     {
-        var cliente = mapper.Map<TEntity>(updateDto);
+        var model = mapper.Map<TEntity>(updateDto);
 
-        var result = BeforeUpdateEntity(updateDto, cliente);
+        var result = BeforeUpdateEntity(updateDto, model);
         if (!result.Success)
             return HandleErrorResponse(result);
 
-        result = await service.UpdateAsync(id, cliente);
+        result = await service.UpdateAsync(id, model);
         if (!result.Success)
             return HandleErrorResponse(result);
 
-        var clienteDto = mapper.Map<TOutputDto>(result.Model);
-        return Success(clienteDto);
+        var modelDto = mapper.Map<TOutputDto>(result.Model);
+        return Success(modelDto);
     }
 
     [HttpDelete("{id}")]

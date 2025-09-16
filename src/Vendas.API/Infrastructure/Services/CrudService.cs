@@ -106,7 +106,8 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
 
             var modelResult = await repository.FindByIdAsync(model.Id);
 
-            await InvalidateEntityCacheAsync();
+            if (cacheService.IsEnabled)
+                await InvalidateEntityCacheAsync();
 
             return Response<TEntity>.Ok(modelResult!);
         }
@@ -139,7 +140,8 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
             repository.Update(modelExistente);
             await unitOfWork.CompleteAsync();
 
-            await InvalidateEntityCacheAsync();
+            if (cacheService.IsEnabled)
+                await InvalidateEntityCacheAsync();
 
             return Response<TEntity>.Ok(modelExistente);
         }
@@ -170,7 +172,8 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
             repository.Delete(modelExistente);
             await unitOfWork.CompleteAsync();
 
-            await InvalidateEntityCacheAsync();
+            if (cacheService.IsEnabled)
+                await InvalidateEntityCacheAsync();
 
             return Response<TEntity>.Ok(modelExistente);
         }
