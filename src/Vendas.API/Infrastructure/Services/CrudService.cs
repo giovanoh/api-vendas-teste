@@ -140,10 +140,12 @@ public class CrudService<TEntity, IRepository, ITransaction>(IRepository reposit
             repository.Update(modelExistente);
             await unitOfWork.CompleteAsync();
 
+            var modelResult = await repository.FindByIdAsync(id);
+
             if (cacheService.IsEnabled)
                 await InvalidateEntityCacheAsync();
 
-            return Response<TEntity>.Ok(modelExistente);
+            return Response<TEntity>.Ok(modelResult!);
         }
         catch (DbUpdateException ex)
         {

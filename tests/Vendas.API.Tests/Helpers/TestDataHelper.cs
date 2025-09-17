@@ -47,6 +47,7 @@ public static class TestDataHelper
             Id = 1,
             Data = new DateTime(2025, 9, 1),
             ValorTotal = 100,
+            ClienteId = 1,
             Cliente = Clientes[0],
 
             Itens = [

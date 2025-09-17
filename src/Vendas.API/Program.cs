@@ -12,8 +12,8 @@ using MySqlConnector;
 using Vendas.API.Domain.Repositories;
 using Vendas.API.Domain.Services;
 using Vendas.API.Infrastructure.Contexts;
+using Vendas.API.Infrastructure.Conventions;
 using Vendas.API.Infrastructure.Factories;
-using Vendas.API.Infrastructure.Middlewares;
 using Vendas.API.Infrastructure.Repositories;
 using Vendas.API.Infrastructure.Services;
 
@@ -49,6 +49,7 @@ builder.Services.AddControllers(options =>
         options.Conventions.Add(new RouteTokenTransformerConvention(
             new LowercaseParameterTransformer()
         ));
+        options.Conventions.Add(new AutoRouteNamingConvention());
     })
     .AddJsonOptions(options =>
     {
@@ -108,3 +109,5 @@ else
 }
 app.MapControllers();
 app.Run();
+
+public partial class Program { }

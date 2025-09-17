@@ -289,7 +289,7 @@ public class VendaServiceTests
 
         _cacheService.Verify(cache => cache.IsEnabled, Times.Once);
         _cacheService.Verify(cache => cache.GetOrSetAsync(It.IsAny<string>(), It.IsAny<Func<Task<Response<Venda>>>>(), It.IsAny<TimeSpan?>()), Times.Never);
-        _vendaRepository.Verify(repo => repo.FindByIdAsync(venda.Id), Times.Once);
+        _vendaRepository.Verify(repo => repo.FindByIdAsync(venda.Id), Times.Exactly(2));
         _vendaRepository.Verify(repo => repo.Update(venda), Times.Once);
         _unitOfWork.Verify(unitOfWork => unitOfWork.CompleteAsync(), Times.Once);
     }
@@ -342,7 +342,7 @@ public class VendaServiceTests
 
         _cacheService.Verify(cache => cache.IsEnabled, Times.Once);
         _cacheService.Verify(cache => cache.RemoveByPatternAsync(It.IsAny<string>()), Times.Once);
-        _vendaRepository.Verify(repo => repo.FindByIdAsync(venda.Id), Times.Once);
+        _vendaRepository.Verify(repo => repo.FindByIdAsync(venda.Id), Times.Exactly(2));
         _vendaRepository.Verify(repo => repo.Update(venda), Times.Once);
         _unitOfWork.Verify(unitOfWork => unitOfWork.CompleteAsync(), Times.Once);
     }

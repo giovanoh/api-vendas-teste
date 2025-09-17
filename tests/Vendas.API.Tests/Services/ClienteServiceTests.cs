@@ -289,7 +289,7 @@ public class ClienteServiceTests
 
         _cacheService.Verify(cache => cache.IsEnabled, Times.Once);
         _cacheService.Verify(cache => cache.GetOrSetAsync(It.IsAny<string>(), It.IsAny<Func<Task<Response<Cliente>>>>(), It.IsAny<TimeSpan?>()), Times.Never);
-        _clienteRepository.Verify(repo => repo.FindByIdAsync(cliente.Id), Times.Once);
+        _clienteRepository.Verify(repo => repo.FindByIdAsync(cliente.Id), Times.Exactly(2));
         _clienteRepository.Verify(repo => repo.Update(cliente), Times.Once);
         _unitOfWork.Verify(unitOfWork => unitOfWork.CompleteAsync(), Times.Once);
     }
@@ -342,7 +342,7 @@ public class ClienteServiceTests
 
         _cacheService.Verify(cache => cache.IsEnabled, Times.Once);
         _cacheService.Verify(cache => cache.RemoveByPatternAsync(It.IsAny<string>()), Times.Once);
-        _clienteRepository.Verify(repo => repo.FindByIdAsync(cliente.Id), Times.Once);
+        _clienteRepository.Verify(repo => repo.FindByIdAsync(cliente.Id), Times.Exactly(2));
         _clienteRepository.Verify(repo => repo.Update(cliente), Times.Once);
         _unitOfWork.Verify(unitOfWork => unitOfWork.CompleteAsync(), Times.Once);
     }

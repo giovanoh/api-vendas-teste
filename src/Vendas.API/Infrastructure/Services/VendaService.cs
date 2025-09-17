@@ -12,8 +12,7 @@ public class VendaService(IVendaRepository repository, IUnitOfWork unitOfWork, I
         vendaExistente.Data = novaVenda.Data;
         vendaExistente.ValorTotal = novaVenda.ValorTotal;
         vendaExistente.ClienteId = novaVenda.ClienteId;
-        vendaExistente.Cliente = novaVenda.Cliente;
-        vendaExistente.ValorTotal = novaVenda.ValorTotal;
+        vendaExistente.Itens.Clear();
         vendaExistente.Itens.AddRange(novaVenda.Itens);
     }
 }

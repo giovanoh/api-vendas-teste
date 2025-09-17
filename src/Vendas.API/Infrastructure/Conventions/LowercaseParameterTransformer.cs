@@ -1,4 +1,4 @@
-namespace Vendas.API.Infrastructure.Middlewares;
+namespace Vendas.API.Infrastructure.Conventions;
 
 public class LowercaseParameterTransformer : IOutboundParameterTransformer
 {

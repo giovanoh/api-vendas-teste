@@ -74,7 +74,8 @@ public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService s
             return HandleErrorResponse(result);
 
         var modelDto = mapper.Map<TOutputDto>(result.Model);
-        return Created("GetById", new { id = modelDto.Id }, modelDto);
+        var routeName = $"{ControllerName}GetById";
+        return Created(routeName, new { id = modelDto.Id }, modelDto);
     }
 
     [HttpPut("{id}")]
@@ -120,5 +121,7 @@ public class CrudController<IService, TEntity, TInputDto, TOutputDto>(IService s
     {
         return Response<TEntity>.Ok(entity);
     }
+
+    protected virtual string ControllerName => GetType().Name.Replace("Controller", "");
 
 }

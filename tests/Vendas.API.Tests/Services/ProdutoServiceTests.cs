@@ -289,7 +289,7 @@ public class ProdutoServiceTests
 
         _cacheService.Verify(cache => cache.IsEnabled, Times.Once);
         _cacheService.Verify(cache => cache.GetOrSetAsync(It.IsAny<string>(), It.IsAny<Func<Task<Response<Produto>>>>(), It.IsAny<TimeSpan?>()), Times.Never);
-        _produtoRepository.Verify(repo => repo.FindByIdAsync(produto.Id), Times.Once);
+        _produtoRepository.Verify(repo => repo.FindByIdAsync(produto.Id), Times.Exactly(2));
         _produtoRepository.Verify(repo => repo.Update(produto), Times.Once);
         _unitOfWork.Verify(unitOfWork => unitOfWork.CompleteAsync(), Times.Once);
     }
@@ -342,7 +342,7 @@ public class ProdutoServiceTests
 
         _cacheService.Verify(cache => cache.IsEnabled, Times.Once);
         _cacheService.Verify(cache => cache.RemoveByPatternAsync(It.IsAny<string>()), Times.Once);
-        _produtoRepository.Verify(repo => repo.FindByIdAsync(produto.Id), Times.Once);
+        _produtoRepository.Verify(repo => repo.FindByIdAsync(produto.Id), Times.Exactly(2));
         _produtoRepository.Verify(repo => repo.Update(produto), Times.Once);
         _unitOfWork.Verify(unitOfWork => unitOfWork.CompleteAsync(), Times.Once);
     }
