@@ -9,3 +9,5 @@ Teste de API C# para comparativo com Kotlin
 - Validação de dados
 - Tratamento de erros consistente
 - Documentação Swagger
+- Testes unitários
+- Testes de integração
